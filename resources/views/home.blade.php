@@ -14,15 +14,35 @@
                         </div>
                     @endif
 
-                    {{ __('You are logged in!') }}
                 </div>
+
+               @if(auth::user()->subscribed('1') )
+                <button type="button" class="btn btn-primary">
+                    You are subscribed to Monthly Basic <span class="badge badge-light"></span>
+                    {{-- <span class="sr-only">unread messages</span> --}}
+                  </button>
+
+
+                @elseif(auth::user()->subscribed('2') )
+                <button type="button" class="btn btn-primary">
+                    You are subscribed to Monthly Unlimited <span class="badge badge-light"></span>
+                    {{-- <span class="sr-only">unread messages</span> --}}
+                  </button>
+
+                @elseif(auth::user()->subscribed('4'))
+                <button type="button" class="btn btn-primary">
+                    You are subscribed to yearly  <span class="badge badge-light"></span>
+                    {{-- <span class="sr-only">unread messages</span> --}}
+                  </button>
+
+                @endif
 
 
 
             </div>
         </div>
 
-        <div class="col-md-8">
+        {{-- <div class="col-md-8">
             <div class="card">
                 <div class="card-header">Monthly Subscription Plan </div>
                 <div class="card-body">
@@ -34,12 +54,12 @@
 
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 </div>
-<script src="https://js.stripe.com/v3/"></script>
+{{-- <script src="https://js.stripe.com/v3/"></script> --}}
 
-<script>
+{{-- <script>
 document.addEventListener('DOMContentLoaded', function() {
     var stripe = Stripe('pk_test_51Pbf6IJIYuloXeDYP291MPYtHUa0XWnXwWtfhBFqOhq2Rf1eBk9nlR4vJhF3axKQK0g8x7ZlKjzbyagtuGRd8xaL00KHTrJpLI');
     var elements = stripe.elements();
@@ -73,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});
+}); --}}
 
 
 

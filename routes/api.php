@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PetitionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,3 +25,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::apiResource('/petition',PetitionController::class);
 
 Route::apiResource('/author',AuthorController::class);
+
+
+Route::middleware('auth')->group(function () {
+
+});
+
+Route::get('post/{post}', [CommentController::class, 'index']);

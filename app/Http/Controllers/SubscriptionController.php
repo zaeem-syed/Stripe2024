@@ -3,15 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Plan;
-use App\Serrvice\StripeService;
 use Illuminate\Http\Request;
+use App\Service\StripeService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Serrvice\StripeService as SerrviceStripeService;
 
 class SubscriptionController extends Controller
 {
     public function index()
     {
         $plans = Plan::get();
+
+        
 
         return view("plan", compact("plans"));
 
@@ -24,10 +28,8 @@ class SubscriptionController extends Controller
      */
     public function show(Plan $plan, Request $request)
     {
-    
+
         $intent = auth()->user()->createSetupIntent();
-
-
         return view("subscription", compact("plan", "intent"));
     }
     /**
@@ -82,4 +84,52 @@ class SubscriptionController extends Controller
         // header("HTTP/1.1 303 See Other");
         // header("Location: " . $checkout_session->url);
     }
+
+    public function Monthly()
+
+    {
+        $user=Auth::user();
+        $active_sub = $user->subscriptions->firstWhere('stripe_status', 'active');
+
+        $change_to=DB::table('plans')->where('stripe_price','price_1PcnoKJIYuloXeDYRzeqLuol')->first();
+
+        // dd($change_to->id);
+
+        $user->subscription($active_sub->type)->swap('price_1PcnoKJIYuloXeDYRzeqLuol');
+
+        $active_sub->type=$change_to->id;
+        $active_sub->save();
+
+
+        return redirect()->back();
+    }
+
+
+    public function cancel()
+    {
+
+        $active_sub=Auth::user()->subscriptions->firstWhere('stripe_status', 'active');
+        $active_sub->cancel();
+        return redirect()->back();
+
+    }
+
+
+    public function trial(Plan $plan, Request $request)
+    {
+        $intent = auth()->user()->createSetupIntent();
+        return view("Trials", compact("plan", "intent"));
+    }
+
+
+    public function subscriptiontrial(Request $request)
+    {
+        $result= StripeService::create_trial($request);
+        if ($result['status'] == 'success') {
+            return redirect()->route('home')->with('success', $result['message']);
+        } else {
+            return response()->json(['error' => $result['message']], 500);
+        }
+    }
+
 }
